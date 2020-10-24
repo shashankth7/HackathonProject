@@ -1,29 +1,42 @@
 package TestCases;
 
+import java.io.IOException;
+
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import BaseClass.BaseUi;
+import Pages.CarLoanPage;
+import Pages.HomeLoanPage;
+import Pages.LoanCalculatorPage;
+import Pages.MainPage;
 
 public class Test1 extends BaseUi{
+	
+	CarLoanPage carLoan;
+	HomeLoanPage homeLoan;
+	LoanCalculatorPage loanCalculator;
+	MainPage mainPage;
+	
+	
 	//**********************Scenario 1*********************************************************************************************************************
 		@Test(dataProvider="carloan",priority=0)
-		public void VerifycarloanData(String loan_amount, String interest_rate,String tenure,String loan_tenure,String expected_result) {
+		public void VerifycarloanData(String loan_amount, String interest_rate,String tenure,String loan_tenure,String expected_result) throws IOException {
 			logger=report.createTest("Car Loan Testing");
 			invokeBrowser("chrome");
 			
-			openApplication(prop.getProperty("URL"));
+			BaseUi base=new BaseUi();
 			
+			mainPage= base.openApplication(prop.getProperty("URL"));
 			
-			driver.findElement(By.xpath("//li[@id='car-loan']")).click();
+			carLoan=mainPage.clickCarLoan();
+			
 
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			
+			
+			
 			clearField(prop.getProperty("LoanAmount_XPath"));	
 			addValues(prop.getProperty("LoanAmount_XPath"), loan_amount);
 			
@@ -44,6 +57,7 @@ public class Test1 extends BaseUi{
 			{actual_result="0.0";}
 			Assert.assertEquals(expected_result, actual_result);
 			
+			writeExcelData(System.getProperty("user.dir") +"\\Resources\\Repositiries\\carloan.xlsx",prop.getProperty("Label_Xpath1"),prop.getProperty("Row_Xpath1"),prop.getProperty("Col_Xpath1"));
 			
 		}
 		
@@ -55,7 +69,7 @@ public class Test1 extends BaseUi{
 	//*******************************Scenario 2*************************************************************************************************************************************
 
 		@Test(dataProvider="homeloanemi",priority=1)
-		public void VerifyhomeloanemiData(String home_value, String down_payment,String loan_insurance,String interest_rate,String loan_tenure,String one_time_expenses,String property_taxes,String home_insurance,String maintenance_expenses ,String expected_result) {
+		public void VerifyhomeloanemiData(String home_value, String down_payment,String loan_insurance,String interest_rate,String loan_tenure,String one_time_expenses,String property_taxes,String home_insurance,String maintenance_expenses ,String expected_result) throws IOException {
 			logger=report.createTest("Home Loan EMI testing");
 			invokeBrowser("chrome");
 			
@@ -97,7 +111,7 @@ public class Test1 extends BaseUi{
 			String actual_result = TotalPayment(prop.getProperty("TotalPayment_2"));
 			Assert.assertEquals(expected_result, actual_result);
 			
-			
+			writeExcelData(System.getProperty("user.dir") +"\\Resources\\Repositiries\\homeloanemi.xlsx",prop.getProperty("Label_Xpath2"),prop.getProperty("Row_Xpath2"),prop.getProperty("Col_Xpath2"));
 		}
 		
 		@DataProvider(name="homeloanemi")
@@ -109,7 +123,7 @@ public class Test1 extends BaseUi{
 	//***********************Scenario 3*************************************************************************************************************************************************
 
 		@Test(dataProvider="loancalculator",priority=2)
-		public void VerifyloancalculatorData(String loan_amount,String interest_rate,String loan_tenure,String fees_charges,String expected_result) {
+		public void VerifyloancalculatorData(String loan_amount,String interest_rate,String loan_tenure,String fees_charges,String expected_result) throws IOException {
 			logger=report.createTest("Loan Calculator testing");
 			invokeBrowser("chrome");
 			
@@ -139,6 +153,7 @@ public class Test1 extends BaseUi{
 			String actual_result = TotalPayment(prop.getProperty("TotalPayment_3"));
 			Assert.assertEquals(expected_result, actual_result);
 			
+			writeExcelData(System.getProperty("user.dir") +"\\Resources\\Repositiries\\loancalculator.xlsx",prop.getProperty("Label_Xpath3"),prop.getProperty("Row_Xpath3"),prop.getProperty("Col_Xpath3"));
 			
 		}
 		

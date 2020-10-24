@@ -3,11 +3,13 @@ package BaseClass;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
@@ -87,7 +89,68 @@ public class BaseUi {
 		return PageFactory.initElements(driver, MainPage.class);
 
 	}
+	
+	
+	public void writeExcelData(String fileName,String Label_Xpath, String Row_Xpath,String Col_Xpath) throws IOException {
+		
+		int Row_count = driver.findElements(By.xpath(Row_Xpath)).size();
+        int Col_count = driver.findElements(By.xpath(Col_Xpath)).size();
+        
+        
+        String first_part = Row_Xpath+"[";
+        String second_part = "]/td[";
+        String third_part = "]";
+        
 
+//*****************************************************************
+@SuppressWarnings("resource")
+XSSFWorkbook workbook = new XSSFWorkbook();
+XSSFSheet sheet = workbook.createSheet("Data");
+
+Row row = sheet.createRow(0);
+for(int i=1;i<=Col_count;i++)
+{
+row.createCell(i-1).setCellValue(driver.findElement(By.xpath(Label_Xpath+"["+i+"]")).getText());
+}
+
+for (int i = 1; i <= Row_count; i++) {
+row = sheet.createRow(i);
+for (int j = 1; j <= Col_count; j++) {
+String final_xpath = first_part + i + second_part + j + third_part;
+
+String Table_data = driver.findElement(By.xpath(final_xpath)).getText();
+row.createCell(j-1).setCellValue(Table_data);
+//System.out.print(Table_data + "  ");
+
+}
+//System.out.println("");
+}
+
+
+
+
+
+
+
+
+FileOutputStream fos = new FileOutputStream(new File(fileName));
+
+workbook.write(fos);
+
+fos.close();
+
+//print message
+System.err.println("");
+System.err.println("************************************************************");
+System.err.println("Data has been stored");
+System.err.println("************************************************************");
+
+
+
+
+
+	}
+	
 	
 	public void reportPass(String reportString) {
 		logger.log(Status.PASS, reportString);
