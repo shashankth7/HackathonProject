@@ -6,7 +6,7 @@
       <class name="TestCases.Test1">
         <methods>
           <include name="flushReports"/>
-          <include name="VerifycarloanData" invocation-numbers="0 1 2"/>
+          <include name="VerifyloancalculatorData" invocation-numbers="1"/>
         </methods>
       </class> <!-- TestCases.Test1 -->
     </classes>

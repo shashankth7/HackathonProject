@@ -57,7 +57,7 @@ public class BaseUi {
 						System.getProperty("user.dir") + "\\Resources\\Drivers\\msedgedriver.exe");
 				driver = new EdgeDriver();
 			}
-			reportPass("Browser invoked is : "+browserName);
+			reportPass("Browser invoked is : " + browserName);
 		} catch (Exception e) {
 			reportFail(e.getMessage());
 		}
@@ -72,7 +72,7 @@ public class BaseUi {
 						System.getProperty("user.dir") + "\\Resources\\Repositiries\\Config.properties");
 				prop.load(file);
 			} catch (Exception e) {
-				 reportFail(e.getMessage());
+				reportFail(e.getMessage());
 			}
 		}
 	}
@@ -80,78 +80,62 @@ public class BaseUi {
 	public MainPage openApplication(String url) {
 		try {
 			driver.get(url);
-			reportPass("website opened with url : "+ url);
-		}
-		catch (Exception e) {
+			reportPass("website opened with url : " + url);
+		} catch (Exception e) {
 			reportFail(e.getMessage());
 		}
-		
+
 		return PageFactory.initElements(driver, MainPage.class);
 
 	}
-	
-	
-	public void writeExcelData(String fileName,String Label_Xpath, String Row_Xpath,String Col_Xpath) throws IOException {
-		
+
+	public void writeExcelData(String fileName, String Label_Xpath, String Row_Xpath, String Col_Xpath)
+			throws IOException {
+
 		int Row_count = driver.findElements(By.xpath(Row_Xpath)).size();
-        int Col_count = driver.findElements(By.xpath(Col_Xpath)).size();
-        
-        
-        String first_part = Row_Xpath+"[";
-        String second_part = "]/td[";
-        String third_part = "]";
-        
+		int Col_count = driver.findElements(By.xpath(Col_Xpath)).size();
+
+		String first_part = Row_Xpath + "[";
+		String second_part = "]/td[";
+		String third_part = "]";
 
 //*****************************************************************
-@SuppressWarnings("resource")
-XSSFWorkbook workbook = new XSSFWorkbook();
-XSSFSheet sheet = workbook.createSheet("Data");
+		@SuppressWarnings("resource")
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("Data");
 
-Row row = sheet.createRow(0);
-for(int i=1;i<=Col_count;i++)
-{
-row.createCell(i-1).setCellValue(driver.findElement(By.xpath(Label_Xpath+"["+i+"]")).getText());
-}
+		Row row = sheet.createRow(0);
+		for (int i = 1; i <= Col_count; i++) {
+			row.createCell(i - 1).setCellValue(driver.findElement(By.xpath(Label_Xpath + "[" + i + "]")).getText());
+		}
 
-for (int i = 1; i <= Row_count; i++) {
-row = sheet.createRow(i);
-for (int j = 1; j <= Col_count; j++) {
-String final_xpath = first_part + i + second_part + j + third_part;
+		for (int i = 1; i <= Row_count; i++) {
+			row = sheet.createRow(i);
+			for (int j = 1; j <= Col_count; j++) {
+				String final_xpath = first_part + i + second_part + j + third_part;
 
-String Table_data = driver.findElement(By.xpath(final_xpath)).getText();
-row.createCell(j-1).setCellValue(Table_data);
-//System.out.print(Table_data + "  ");
+				String Table_data = driver.findElement(By.xpath(final_xpath)).getText();
+				row.createCell(j - 1).setCellValue(Table_data);
+				//System.out.print(Table_data + "  ");
 
-}
-//System.out.println("");
-}
+			}
+			//System.out.println("");
+		}
 
+		FileOutputStream fos = new FileOutputStream(new File(fileName));
 
+		workbook.write(fos);
 
+		fos.close();
 
-
-
-
-
-FileOutputStream fos = new FileOutputStream(new File(fileName));
-
-workbook.write(fos);
-
-fos.close();
-
-//print message
-System.err.println("");
-System.err.println("************************************************************");
-System.err.println("Data has been stored");
-System.err.println("************************************************************");
-
-
-
-
+		//print message
+		System.err.println("");
+		System.err.println("************************************************************");
+		System.err.println("Data has been stored");
+		System.err.println("************************************************************");
 
 	}
-	
-	
+
 	public void reportPass(String reportString) {
 		logger.log(Status.PASS, reportString);
 	}
@@ -174,8 +158,8 @@ System.err.println("************************************************************
 		takeScreenShot();
 		Assert.fail();
 	}
-	
-	public String[][] getExcelData(String fileName, String sheetName,int totalNoOfRows,int totalNoOfCols) {
+
+	public String[][] getExcelData(String fileName, String sheetName, int totalNoOfRows, int totalNoOfCols) {
 		String[][] arrayExcelData = null;
 		try {
 			FileInputStream fs = new FileInputStream(fileName);
@@ -183,88 +167,73 @@ System.err.println("************************************************************
 			XSSFWorkbook wb = new XSSFWorkbook(fs);
 			XSSFSheet sh = wb.getSheet(sheetName);
 
-			
-			arrayExcelData = new String[totalNoOfRows-1][totalNoOfCols-1];
-			
-			for (int i= 1 ; i < totalNoOfRows; i++) {
+			arrayExcelData = new String[totalNoOfRows - 1][totalNoOfCols - 1];
 
-				for (int j=1; j < totalNoOfCols; j++) {
-					arrayExcelData[i-1][j-1] =String.valueOf(sh.getRow(i).getCell(j));;
+			for (int i = 1; i < totalNoOfRows; i++) {
+
+				for (int j = 1; j < totalNoOfCols; j++) {
+					arrayExcelData[i - 1][j - 1] = String.valueOf(sh.getRow(i).getCell(j));
+					;
 				}
 
 			}
 			fs.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			e.printStackTrace();
 		}
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-			e.printStackTrace();
-		} 
-		
+
 		return arrayExcelData;
 	}
-	
 
 	public void ExplicitWait(String LocatorValue) {
-		WebDriverWait wait=new WebDriverWait(driver, 20);
-			if(LocatorValue.endsWith("_Id")) {
-				wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(LocatorValue)));
-			}
-			else if(LocatorValue.endsWith("_XPath")) {
-				wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(LocatorValue)));
-			}
-			else if(LocatorValue.endsWith("_ClassName")) {
-				wait.until(ExpectedConditions.visibilityOfElementLocated(By.className(LocatorValue)));
-			}
-			else if(LocatorValue.endsWith("_TagName")) {
-				wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName(LocatorValue)));
-			}
-			else if(LocatorValue.endsWith("_LinkText")) {
-				wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText(LocatorValue)));
-			}
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		if (LocatorValue.endsWith("_Id")) {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(LocatorValue)));
+		} else if (LocatorValue.endsWith("_XPath")) {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(LocatorValue)));
+		} else if (LocatorValue.endsWith("_ClassName")) {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.className(LocatorValue)));
+		} else if (LocatorValue.endsWith("_TagName")) {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName(LocatorValue)));
+		} else if (LocatorValue.endsWith("_LinkText")) {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText(LocatorValue)));
+		}
 
-		
 	}
-	
+
 	public void clickElement(String LocatorValue) {
-		
-			if(LocatorValue.endsWith("_Id")) {
-				driver.findElement(By.id(LocatorValue)).click();
-			}
-			else if(LocatorValue.endsWith("_XPath")) {
-				driver.findElement(By.xpath(LocatorValue)).click();
-			}
-			else if(LocatorValue.endsWith("_ClassName")) {
-				driver.findElement(By.className(LocatorValue)).click();
-			}
-			else if(LocatorValue.endsWith("_TagName")) {
-				driver.findElement(By.tagName(LocatorValue)).click();
-			}
-			else if(LocatorValue.endsWith("_LinkText")) {
-				driver.findElement(By.linkText(LocatorValue)).click();
-			}
-		
+
+		if (LocatorValue.endsWith("_Id")) {
+			driver.findElement(By.id(LocatorValue)).click();
+		} else if (LocatorValue.endsWith("_XPath")) {
+			driver.findElement(By.xpath(LocatorValue)).click();
+		} else if (LocatorValue.endsWith("_ClassName")) {
+			driver.findElement(By.className(LocatorValue)).click();
+		} else if (LocatorValue.endsWith("_TagName")) {
+			driver.findElement(By.tagName(LocatorValue)).click();
+		} else if (LocatorValue.endsWith("_LinkText")) {
+			driver.findElement(By.linkText(LocatorValue)).click();
+		}
+
 	}
-	
+
 	public void clearField(String LocatorValue) {
-		WebElement element=driver.findElement(By.xpath(LocatorValue));
+		WebElement element = driver.findElement(By.xpath(LocatorValue));
 		element.sendKeys(Keys.CONTROL + "a");
 		element.sendKeys(Keys.DELETE);
-		
+
 	}
-	
+
 	public void addValues(String LocatorValue, String value) {
 		try {
 			driver.findElement(By.xpath(LocatorValue)).sendKeys(value);
 			driver.findElement(By.xpath(LocatorValue)).sendKeys(Keys.ENTER);
-			
-			reportPass("Value entered is : " + value) ;
-		}
-		catch (Exception e) {
+
+			reportPass("Value entered is : " + value);
+		} catch (Exception e) {
 			reportFail(e.getMessage());
 		}
 
@@ -273,11 +242,10 @@ System.err.println("************************************************************
 	public void LoanEMI(String LocatorValue) {
 		try {
 			WebElement element = driver.findElement(By.xpath(LocatorValue));
-			String EMI=element.getText();
+			String EMI = element.getText();
 			System.out.println("EMI amount is : " + EMI);
 			reportPass("Loan EMI is : " + EMI);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			reportFail(e.getMessage());
 		}
 	}
@@ -285,11 +253,10 @@ System.err.println("************************************************************
 	public void Interest(String LocatorValue) {
 		try {
 			WebElement element = driver.findElement(By.xpath(LocatorValue));
-			String Interest=element.getText();
+			String Interest = element.getText();
 			System.out.println("Interest payable is : " + Interest);
 			reportPass("Interest amount is : " + Interest);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			reportFail(e.getMessage());
 		}
 	}
@@ -298,24 +265,21 @@ System.err.println("************************************************************
 		String Payment = null;
 		try {
 			WebElement element = driver.findElement(By.xpath(LocatorValue));
-			Payment=element.getText();
+			Payment = element.getText();
 			System.out.println("Total amount is : " + Payment);
 			reportPass("Total amount will be : " + Payment);
-			
-		}
-		catch (Exception e) {
+
+		} catch (Exception e) {
 			reportFail(e.getMessage());
 		}
 		return Payment;
 
 	}
-	
+
 	@AfterMethod
 	public void flushReports() {
 		report.flush();
 		driver.close();
 	}
-
-
 
 }

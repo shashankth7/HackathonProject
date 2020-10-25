@@ -27,14 +27,11 @@ public class Test1 extends BaseUi{
 			logger=report.createTest("Car Loan Testing");
 			invokeBrowser("chrome");
 			
-			BaseUi base=new BaseUi();
+			//BaseUi base=new BaseUi();
 			
-			mainPage= base.openApplication(prop.getProperty("URL"));
+			mainPage= openApplication(prop.getProperty("URL"));
 			
 			carLoan=mainPage.clickCarLoan();
-			
-
-			
 			
 			
 			clearField(prop.getProperty("LoanAmount_XPath"));	
@@ -73,21 +70,11 @@ public class Test1 extends BaseUi{
 			logger=report.createTest("Home Loan EMI testing");
 			invokeBrowser("chrome");
 			
-			openApplication(prop.getProperty("URL"));
+			mainPage= openApplication(prop.getProperty("URL"));
 			
-			
-			//traversing to this website https://emicalculator.net/home-loan-emi-calculator/
-//			driver.findElement(By.xpath("//span[@class='navbar-toggler-icon']")).click();
-			driver.findElement(By.xpath("//a[@title='Home Loan EMI Calculator']")).click();
+			homeLoan=mainPage.clickHomeLoan();
 
 			
-			
-
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			clearField(prop.getProperty("Home_Value"));	
 			addValues(prop.getProperty("Home_Value"), home_value);
 			clearField(prop.getProperty("Down_Payment"));	
@@ -126,20 +113,12 @@ public class Test1 extends BaseUi{
 		public void VerifyloancalculatorData(String loan_amount,String interest_rate,String loan_tenure,String fees_charges,String expected_result) throws IOException {
 			logger=report.createTest("Loan Calculator testing");
 			invokeBrowser("chrome");
+		
+			mainPage= openApplication(prop.getProperty("URL"));
 			
-			openApplication(prop.getProperty("URL"));
+			loanCalculator=mainPage.LoanCal();
 			
-			//traversing to this website https://emicalculator.net/loan-calculator/
-//			driver.findElement(By.xpath("//span[@class='navbar-toggler-icon']")).click();
-			driver.findElement(By.xpath("//a[@title='Calculators']")).click();
-			driver.findElement(By.xpath("//a[@title='Loan Calculator']")).click();
-
 			
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			clearField(prop.getProperty("Loan_Amount_3"));	
 			addValues(prop.getProperty("Loan_Amount_3"), loan_amount);
 			clearField(prop.getProperty("Interest_Rate_3"));	
