@@ -99,7 +99,7 @@ public class BaseUi {
 		String second_part = "]/td[";
 		String third_part = "]";
 
-//*****************************************************************
+
 		@SuppressWarnings("resource")
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet("Data");
@@ -173,7 +173,7 @@ public class BaseUi {
 
 				for (int j = 1; j < totalNoOfCols; j++) {
 					arrayExcelData[i - 1][j - 1] = String.valueOf(sh.getRow(i).getCell(j));
-					;
+					
 				}
 
 			}
